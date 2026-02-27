@@ -1,0 +1,19 @@
+{
+    "project_slug": "my-django-app",
+    "package_name": "{{ cookiecutter.project_slug.replace('-', '_') }}",
+    "description": "A Django application.",
+    "author_name": "Author Name",
+    "author_email": "author@example.com",
+    "github_owner": "owner",
+    "version": "0.1.0",
+    "year": "2025",
+    "_copy_without_render": [
+        ".github/workflows/test.yml",
+        ".github/workflows/test-db.yml",
+        ".github/workflows/lint.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/zizmor.yml",
+        ".github/workflows/scorecard.yml",
+        ".github/workflows/update_coc.yml"
+    ]
+}

@@ -1,0 +1,43 @@
+# {{cookiecutter.project_slug}}
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![PyPI version](https://badge.fury.io/py/{{cookiecutter.project_slug}}.svg)](https://pypi.python.org/pypi/{{cookiecutter.project_slug}}/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/{{cookiecutter.project_slug}}.svg)](https://pypi.python.org/pypi/{{cookiecutter.project_slug}}/)
+[![PyPI djversions](https://img.shields.io/pypi/djversions/{{cookiecutter.project_slug}}.svg)](https://pypi.org/project/{{cookiecutter.project_slug}}/)
+[![PyPI status](https://img.shields.io/pypi/status/{{cookiecutter.project_slug}}.svg)](https://pypi.python.org/pypi/{{cookiecutter.project_slug}})
+[![Documentation Status](https://readthedocs.org/projects/{{cookiecutter.project_slug}}/badge/?version=latest)](http://{{cookiecutter.project_slug}}.readthedocs.io/?badge=latest/)
+[![Code Cov](https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/branch/main/graph/badge.svg?token=0IZOKN2DYL)](https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}})
+[![Test Status](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml?query=branch:main)
+[![Lint Status](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml?query=branch:main)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/badge)](https://securityscorecards.dev/viewer/?uri=github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}})
+
+{{cookiecutter.description}}
+
+## Installation
+
+```bash
+pip install {{cookiecutter.project_slug}}
+```
+
+## Quick Start
+
+TODO: Add quick start example.
+
+## Documentation
+
+Full documentation is available at [{{cookiecutter.project_slug}}.readthedocs.io](https://{{cookiecutter.project_slug}}.readthedocs.io).
+
+## Development
+
+```bash
+git clone https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}.git
+cd {{cookiecutter.project_slug}}
+just setup
+just install
+just test
+```
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).

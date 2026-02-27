@@ -1,0 +1,304 @@
+name: Test
+
+# Standard testing workflow: SQLite on Linux, Windows, and macOS.
+# If your app needs database-specific testing (postgres, mysql, mariadb, oracle)
+# use test-db.yml instead and delete this file.
+
+permissions:
+  contents: read
+
+on:
+  push:
+    tags-ignore:
+      - '*'
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+  merge_group:
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: true
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Open ssh debug session.'
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    # Every Sunday at 9:00 AM Los Angeles time (17:00 UTC).
+    - cron: '0 17 * * 0'
+
+jobs:
+
+  test-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        django-version:
+          - '4.2' # LTS April 2026
+          - '5.2' # LTS April 2028
+          - '6.0' # April 2027
+        exclude:
+          - python-version: '3.13'
+            django-version: '4.2'
+          - python-version: '3.14'
+            django-version: '4.2'
+
+          - python-version: '3.10'
+            django-version: '6.0'
+          - python-version: '3.11'
+            django-version: '6.0'
+    env:
+      COVERAGE_FILE: py${{ matrix.python-version }}-linux-dj${{ matrix.django-version }}.coverage
+      TEST_PYTHON_VERSION: ${{ matrix.python-version }}
+      TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+      id: sp
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+    - name: install-emacs-linux
+      if: ${{ github.event.inputs.debug == 'true' }}
+      run: |
+        sudo apt install emacs
+    - name: setup-ssh-debug
+      if: ${{ github.event.inputs.debug == 'true' }}
+      uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
+      timeout-minutes: 60
+    - name: Install uv
+      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
+      with:
+        enable-cache: false
+    - name: Upgrade all dependencies for our weekly runs
+      if: github.event_name == 'schedule'
+      run: uv lock --upgrade
+    - name: Setup Just
+      uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
+    - name: Install Dependencies
+      shell: bash
+      env:
+        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
+        DJANGO_VERSION: ${{ matrix.django-version }}
+      run: |
+        just setup "$PYTHON_PATH"
+        if [[ "$DJANGO_VERSION" =~ (a|b|rc) ]]; then
+          just test-lock Django==$DJANGO_VERSION
+        else
+          just test-lock Django~=$DJANGO_VERSION.0
+        fi
+    - name: Run Unit Tests
+      run: |
+        just test-all
+    - name: Store coverage files
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      with:
+        name: ${{ env.COVERAGE_FILE }}
+        path: ${{ env.COVERAGE_FILE }}
+
+  test-windows:
+    runs-on: windows-latest
+    permissions:
+      actions: write
+    defaults:
+      run:
+        shell: pwsh
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12', '3.14']
+        django-version:
+          - '4.2' # LTS April 2026
+          - '5.2' # LTS April 2028
+          - '6.0' # April 2027
+        exclude:
+          - python-version: '3.12'
+            django-version: '4.2'
+          - python-version: '3.14'
+            django-version: '4.2'
+
+          - python-version: '3.10'
+            django-version: '5.2'
+          - python-version: '3.14'
+            django-version: '5.2'
+
+          - python-version: '3.10'
+            django-version: '6.0'
+          - python-version: '3.12'
+            django-version: '6.0'
+    env:
+      COVERAGE_FILE: py${{ matrix.python-version }}-windows-dj${{ matrix.django-version }}.coverage
+      TEST_PYTHON_VERSION: ${{ matrix.python-version }}
+      TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+      id: sp
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+    - name: setup-ssh-debug
+      if: ${{ github.event.inputs.debug == 'true' }}
+      uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
+      timeout-minutes: 60
+    - name: install-vim-windows
+      if: ${{ github.event.inputs.debug == 'true' }}
+      uses: rhysd/action-setup-vim@19e3dd31a84dbc2c5445d65e9b363f616cab96c1
+    - name: Install uv
+      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
+      with:
+        enable-cache: false
+    - name: Upgrade all dependencies for our weekly runs
+      if: github.event_name == 'schedule'
+      run: uv lock --upgrade
+    - name: Setup Just
+      uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
+    - name: Install Dependencies
+      env:
+        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
+        DJANGO_VERSION: ${{ matrix.django-version }}
+      run: |
+        just setup "$PYTHON_PATH"
+        if ($env:DJANGO_VERSION -match "(a|b|rc)") {
+          just test-lock "Django==$env:DJANGO_VERSION"
+        } else {
+          just test-lock "Django~=$env:DJANGO_VERSION.0"
+        }
+    - name: Run Unit Tests
+      run: |
+        just test-all
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Store coverage files
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      with:
+        name: ${{ env.COVERAGE_FILE }}
+        path: ${{ env.COVERAGE_FILE }}
+
+  test-macos:
+    runs-on: macos-latest
+    permissions:
+      actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12', '3.14']
+        django-version:
+          - '4.2' # LTS April 2026
+          - '5.2' # LTS April 2028
+          - '6.0' # April 2027
+        exclude:
+          - python-version: '3.12'
+            django-version: '4.2'
+          - python-version: '3.14'
+            django-version: '4.2'
+
+          - python-version: '3.10'
+            django-version: '5.2'
+          - python-version: '3.14'
+            django-version: '5.2'
+
+          - python-version: '3.10'
+            django-version: '6.0'
+          - python-version: '3.12'
+            django-version: '6.0'
+    env:
+      COVERAGE_FILE: py${{ matrix.python-version }}-macos-dj${{ matrix.django-version }}.coverage
+      TEST_PYTHON_VERSION: ${{ matrix.python-version }}
+      TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+      id: sp
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+    - name: install-emacs-macos
+      if: ${{ github.event.inputs.debug == 'true' }}
+      run: |
+        brew install emacs
+    - name: setup-ssh-debug
+      if: ${{ github.event.inputs.debug == 'true' }}
+      uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
+      timeout-minutes: 60
+    - name: Install uv
+      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
+      with:
+        enable-cache: false
+    - name: Upgrade all dependencies for our weekly runs
+      if: github.event_name == 'schedule'
+      run: uv lock --upgrade
+    - name: Setup Just
+      run: |
+        brew install just
+    - name: Install Dependencies
+      env:
+        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
+        DJANGO_VERSION: ${{ matrix.django-version }}
+      run: |
+        just setup "$PYTHON_PATH"
+        if [[ "$DJANGO_VERSION" =~ (a|b|rc) ]]; then
+          just test-lock Django==$DJANGO_VERSION
+        else
+          just test-lock Django~=$DJANGO_VERSION.0
+        fi
+    - name: Run Unit Tests
+      run: |
+        just test-all
+    - name: Store coverage files
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      with:
+        name: ${{ env.COVERAGE_FILE }}
+        path: ${{ env.COVERAGE_FILE }}
+
+  coverage-combine:
+    needs: [test-linux, test-windows, test-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        id: sp
+        with:
+          python-version: '3.12'
+      - name: Install uv
+        uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
+        with:
+          enable-cache: false
+      - name: Setup Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
+      - name: Install Dependencies
+        env:
+          PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
+        run: |
+          just setup "$PYTHON_PATH"
+      - name: Get coverage files
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          pattern: "*.coverage"
+          merge-multiple: true
+      - run: ls -la *.coverage
+      - run: just coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml

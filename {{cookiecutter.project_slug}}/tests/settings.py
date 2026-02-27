@@ -1,0 +1,83 @@
+import os
+from pathlib import Path
+
+try:
+    import django_stubs_ext
+
+    django_stubs_ext.monkeypatch()
+except ImportError:
+    pass
+
+DEBUG = True
+SECRET_KEY = "psst"
+USE_TZ = True
+
+rdbms = os.environ.get("RDBMS", "sqlite")
+
+if rdbms == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": Path(__file__).parent / "test.db",
+        }
+    }
+elif rdbms == "postgres":  # pragma: no cover
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB", "postgres"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
+            "HOST": os.environ.get("POSTGRES_HOST", ""),
+            "PORT": os.environ.get("POSTGRES_PORT", ""),
+        }
+    }
+elif rdbms == "mysql":  # pragma: no cover
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ.get("MYSQL_DATABASE", "test"),
+            "USER": os.environ.get("MYSQL_USER", "root"),
+            "PASSWORD": os.environ.get("MYSQL_PASSWORD", "root"),
+            "HOST": os.environ.get("MYSQL_HOST", "127.0.0.1"),
+            "PORT": os.environ.get("MYSQL_PORT", "3306"),
+        }
+    }
+elif rdbms == "mariadb":  # pragma: no cover
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ.get("MARIADB_DATABASE", "test"),
+            "USER": os.environ.get("MARIADB_USER", "root"),
+            "PASSWORD": os.environ.get("MARIADB_PASSWORD", "root"),
+            "HOST": os.environ.get("MARIADB_HOST", "127.0.0.1"),
+            "PORT": os.environ.get("MARIADB_PORT", "3306"),
+        }
+    }
+elif rdbms == "oracle":  # pragma: no cover
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.oracle",
+            "NAME": (
+                f"{os.environ.get('ORACLE_HOST', 'localhost')}:"
+                f"{os.environ.get('ORACLE_PORT', '1521')}"
+                f"/{os.environ.get('ORACLE_DATABASE', 'XEPDB1')}"
+            ),
+            "USER": os.environ.get("ORACLE_USER", "system"),
+            "PASSWORD": os.environ.get("ORACLE_PASSWORD", "password"),
+        }
+    }
+    try:
+        import oracledb
+
+        oracledb.init_oracle_client()
+    except ImportError:
+        pass
+
+INSTALLED_APPS = [
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
+    "{{cookiecutter.package_name}}",
+]
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
