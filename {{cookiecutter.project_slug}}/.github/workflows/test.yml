@@ -14,6 +14,12 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/test.yml"
+      - "pyproject.toml"
+      - "justfile"
   merge_group:
   workflow_call:
     secrets:
@@ -26,6 +32,11 @@ on:
         required: true
         default: false
         type: boolean
+      clear_cache:
+        description: 'Clear GitHub Tool cache.'
+        required: true
+        default: false
+        type: boolean
   schedule:
     # Every Sunday at 9:00 AM Los Angeles time (17:00 UTC).
     - cron: '0 17 * * 0'
@@ -35,30 +46,35 @@ jobs:
   test-linux:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       actions: write
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         django-version:
-          - '4.2' # LTS April 2026
-          - '5.2' # LTS April 2028
-          - '6.0' # April 2027
+          - 'dj42' # LTS April 2026
+          - 'dj52' # LTS April 2028
+          - 'dj60' # April 2027
         exclude:
           - python-version: '3.13'
-            django-version: '4.2'
+            django-version: 'dj42'
           - python-version: '3.14'
-            django-version: '4.2'
+            django-version: 'dj42'
 
           - python-version: '3.10'
-            django-version: '6.0'
+            django-version: 'dj60'
           - python-version: '3.11'
-            django-version: '6.0'
+            django-version: 'dj60'
     env:
-      COVERAGE_FILE: py${{ matrix.python-version }}-linux-dj${{ matrix.django-version }}.coverage
+      COVERAGE_FILE: linux-py${{ matrix.python-version }}-${{ matrix.django-version }}-sqlite.coverage
       TEST_PYTHON_VERSION: ${{ matrix.python-version }}
       TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+      TEST_DATABASE_VERSION: "sqlite"
     steps:
+    - name: Clear Tool cache
+      if: ${{ github.event.inputs.clear_cache == 'true' }}
+      run: sudo rm -rf /opt/hostedtoolcache
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         persist-credentials: false
@@ -68,40 +84,27 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-    - name: install-emacs-linux
+    - name: Install uv
+      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098
+      with:
+        enable-cache: false
+    - name: Setup Just
+      uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b
+    - name: Install Emacs
       if: ${{ github.event.inputs.debug == 'true' }}
       run: |
         sudo apt install emacs
-    - name: setup-ssh-debug
+    - name: Setup tmate session
       if: ${{ github.event.inputs.debug == 'true' }}
       uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
       timeout-minutes: 60
-    - name: Install uv
-      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
-      with:
-        enable-cache: false
-    - name: Upgrade all dependencies for our weekly runs
-      if: github.event_name == 'schedule'
-      run: uv lock --upgrade
-    - name: Setup Just
-      uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
-    - name: Install Dependencies
-      shell: bash
-      env:
-        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
-        DJANGO_VERSION: ${{ matrix.django-version }}
-      run: |
-        just setup "$PYTHON_PATH"
-        if [[ "$DJANGO_VERSION" =~ (a|b|rc) ]]; then
-          just test-lock Django==$DJANGO_VERSION
-        else
-          just test-lock Django~=$DJANGO_VERSION.0
-        fi
     - name: Run Unit Tests
+      env:
+        TEST_PYTHON: ${{ steps.sp.outputs.python-path }}
       run: |
-        just test-all
+        just test-all -p "$TEST_PYTHON" --group "$TEST_DJANGO_VERSION"
     - name: Store coverage files
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
       with:
         name: ${{ env.COVERAGE_FILE }}
         path: ${{ env.COVERAGE_FILE }}
@@ -109,38 +112,40 @@ jobs:
   test-windows:
     runs-on: windows-latest
     permissions:
+      contents: read
       actions: write
-    defaults:
-      run:
-        shell: pwsh
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.12', '3.14']
         django-version:
-          - '4.2' # LTS April 2026
-          - '5.2' # LTS April 2028
-          - '6.0' # April 2027
+          - 'dj42' # LTS April 2026
+          - 'dj52' # LTS April 2028
+          - 'dj60' # April 2027
         exclude:
           - python-version: '3.12'
-            django-version: '4.2'
+            django-version: 'dj42'
           - python-version: '3.14'
-            django-version: '4.2'
+            django-version: 'dj42'
 
           - python-version: '3.10'
-            django-version: '5.2'
+            django-version: 'dj52'
           - python-version: '3.14'
-            django-version: '5.2'
+            django-version: 'dj52'
 
           - python-version: '3.10'
-            django-version: '6.0'
+            django-version: 'dj60'
           - python-version: '3.12'
-            django-version: '6.0'
+            django-version: 'dj60'
     env:
-      COVERAGE_FILE: py${{ matrix.python-version }}-windows-dj${{ matrix.django-version }}.coverage
+      COVERAGE_FILE: windows-py${{ matrix.python-version }}-${{ matrix.django-version }}-sqlite.coverage
       TEST_PYTHON_VERSION: ${{ matrix.python-version }}
       TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+      TEST_DATABASE_VERSION: "sqlite"
     steps:
+    - name: Clear Tool cache
+      if: ${{ github.event.inputs.clear_cache == 'true' }}
+      run: sudo rm -rf /opt/hostedtoolcache
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         persist-credentials: false
@@ -150,39 +155,27 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-    - name: setup-ssh-debug
-      if: ${{ github.event.inputs.debug == 'true' }}
-      uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
-      timeout-minutes: 60
+    - name: Install uv
+      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098
+      with:
+        enable-cache: false
+    - name: Setup Just
+      uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b
     - name: install-vim-windows
       if: ${{ github.event.inputs.debug == 'true' }}
       uses: rhysd/action-setup-vim@19e3dd31a84dbc2c5445d65e9b363f616cab96c1
-    - name: Install uv
-      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
-      with:
-        enable-cache: false
-    - name: Upgrade all dependencies for our weekly runs
-      if: github.event_name == 'schedule'
-      run: uv lock --upgrade
-    - name: Setup Just
-      uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
-    - name: Install Dependencies
-      env:
-        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
-        DJANGO_VERSION: ${{ matrix.django-version }}
-      run: |
-        just setup "$PYTHON_PATH"
-        if ($env:DJANGO_VERSION -match "(a|b|rc)") {
-          just test-lock "Django==$env:DJANGO_VERSION"
-        } else {
-          just test-lock "Django~=$env:DJANGO_VERSION.0"
-        }
+    - name: Setup tmate session
+      if: ${{ github.event.inputs.debug == 'true' }}
+      uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
+      timeout-minutes: 60
     - name: Run Unit Tests
+      env:
+        TEST_PYTHON: ${{ steps.sp.outputs.python-path }}
       run: |
-        just test-all
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        just test-all -p "$env:TEST_PYTHON" --group "$env:TEST_DJANGO_VERSION"
+      shell: pwsh
     - name: Store coverage files
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
       with:
         name: ${{ env.COVERAGE_FILE }}
         path: ${{ env.COVERAGE_FILE }}
@@ -190,35 +183,40 @@ jobs:
   test-macos:
     runs-on: macos-latest
     permissions:
+      contents: read
       actions: write
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.12', '3.14']
         django-version:
-          - '4.2' # LTS April 2026
-          - '5.2' # LTS April 2028
-          - '6.0' # April 2027
+          - 'dj42' # LTS April 2026
+          - 'dj52' # LTS April 2028
+          - 'dj60' # April 2027
         exclude:
           - python-version: '3.12'
-            django-version: '4.2'
+            django-version: 'dj42'
           - python-version: '3.14'
-            django-version: '4.2'
+            django-version: 'dj42'
 
           - python-version: '3.10'
-            django-version: '5.2'
+            django-version: 'dj52'
           - python-version: '3.14'
-            django-version: '5.2'
+            django-version: 'dj52'
 
           - python-version: '3.10'
-            django-version: '6.0'
+            django-version: 'dj60'
           - python-version: '3.12'
-            django-version: '6.0'
+            django-version: 'dj60'
     env:
-      COVERAGE_FILE: py${{ matrix.python-version }}-macos-dj${{ matrix.django-version }}.coverage
+      COVERAGE_FILE: macos-py${{ matrix.python-version }}-${{ matrix.django-version }}-sqlite.coverage
       TEST_PYTHON_VERSION: ${{ matrix.python-version }}
       TEST_DJANGO_VERSION: ${{ matrix.django-version }}
+      TEST_DATABASE_VERSION: "sqlite"
     steps:
+    - name: Clear Tool cache
+      if: ${{ github.event.inputs.clear_cache == 'true' }}
+      run: sudo rm -rf /opt/hostedtoolcache
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         persist-credentials: false
@@ -228,40 +226,27 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
+    - name: Install uv
+      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098
+      with:
+        enable-cache: false
+    - name: Setup Just
+      uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b
     - name: install-emacs-macos
       if: ${{ github.event.inputs.debug == 'true' }}
       run: |
         brew install emacs
-    - name: setup-ssh-debug
+    - name: Setup tmate session
       if: ${{ github.event.inputs.debug == 'true' }}
       uses: mxschmitt/action-tmate@c0afd6f790e3a5564914980036ebf83216678101
       timeout-minutes: 60
-    - name: Install uv
-      uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
-      with:
-        enable-cache: false
-    - name: Upgrade all dependencies for our weekly runs
-      if: github.event_name == 'schedule'
-      run: uv lock --upgrade
-    - name: Setup Just
-      run: |
-        brew install just
-    - name: Install Dependencies
-      env:
-        PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
-        DJANGO_VERSION: ${{ matrix.django-version }}
-      run: |
-        just setup "$PYTHON_PATH"
-        if [[ "$DJANGO_VERSION" =~ (a|b|rc) ]]; then
-          just test-lock Django==$DJANGO_VERSION
-        else
-          just test-lock Django~=$DJANGO_VERSION.0
-        fi
     - name: Run Unit Tests
+      env:
+        TEST_PYTHON: ${{ steps.sp.outputs.python-path }}
       run: |
-        just test-all
+        just test-all -p "$TEST_PYTHON" --group "$TEST_DJANGO_VERSION"
     - name: Store coverage files
-      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
       with:
         name: ${{ env.COVERAGE_FILE }}
         path: ${{ env.COVERAGE_FILE }}
@@ -276,22 +261,16 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-        id: sp
         with:
           python-version: '3.12'
       - name: Install uv
-        uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b
+        uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098
         with:
           enable-cache: false
       - name: Setup Just
-        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
-      - name: Install Dependencies
-        env:
-          PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
-        run: |
-          just setup "$PYTHON_PATH"
+        uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b
       - name: Get coverage files
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
         with:
           pattern: "*.coverage"
           merge-multiple: true
