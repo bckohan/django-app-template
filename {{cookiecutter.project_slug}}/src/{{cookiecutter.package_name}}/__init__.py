@@ -1,4 +1,10 @@
-"""{{cookiecutter.description}}"""
+r"""
+::
+
+    __FIGLET__
+
+{{cookiecutter.description}}
+"""
 
 __title__ = "{{cookiecutter.project_slug}}"
 __version__ = "{{cookiecutter.version}}"
