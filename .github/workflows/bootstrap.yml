@@ -8,7 +8,6 @@ name: Bootstrap Repository
 permissions:
   contents: write
   pull-requests: write
-  workflows: write
 
 on:
   push:
@@ -115,6 +114,11 @@ jobs:
         if: steps.check.outputs.needed == 'true'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
         with:
+          # BOOTSTRAP_TOKEN must be a PAT with the 'workflow' OAuth scope.
+          # GITHUB_TOKEN cannot push .github/workflows/ files (GitHub restriction).
+          # Create a classic PAT at Settings → Developer settings → Personal access tokens,
+          # enable the 'workflow' scope, and add it as repo secret BOOTSTRAP_TOKEN.
+          token: ${{ secrets.BOOTSTRAP_TOKEN || github.token }}
           branch: bootstrap/initial-setup
           delete-branch: true
           commit-message: "Bootstrap: initialize repository from django-app-template"

@@ -8,6 +8,8 @@ A [cookiecutter](https://cookiecutter.readthedocs.io/) GitHub template for boots
 
 When a new repo is created from this template, `.github/workflows/bootstrap.yml` auto-runs on first push to `main`, derives all values from the GitHub API, renders the cookiecutter template in-place, and opens a PR.
 
+**Bootstrap requires a `BOOTSTRAP_TOKEN` repo secret** — a classic PAT with the `workflow` OAuth scope. `GITHUB_TOKEN` cannot push `.github/workflows/` files (a hard GitHub restriction, not fixable via the `permissions` block). The workflow falls back to `github.token` if the secret is absent, which will fail for workflow files.
+
 ## Repo Structure
 
 - `cookiecutter.json` — template variables and `_copy_without_render` list
@@ -25,7 +27,7 @@ Everything inside `{{cookiecutter.project_slug}}/` is rendered by cookiecutter; 
 {%- set lb = '{{' -%}
 {%- set rb = '}}' -%}
 ```
-All just `{{ VAR }}` syntax is written as `{{ lb }}VAR{{ rb }}`. The `test-all` recipe uses a `#!/usr/bin/env bash` shebang with bash `if [ -z "..." ]` syntax instead of just's `{{ if }}` expressions.
+All just `{{ VAR }}` syntax is written as `{{ lb }}VAR{{ rb }}`.
 
 When adding new files to the template that use `{{ }}` syntax (just recipes, shell scripts, etc.), apply the same workarounds or add the file to `_copy_without_render`.
 
@@ -59,11 +61,11 @@ just install      # install all dev dependencies via uv
 
 ### Tests
 ```bash
-just test                      # run tests (SQLite)
-just test-all                  # run all tests with coverage
-just test-all psycopg3         # run with PostgreSQL backend
-just test tests/test_foo.py    # run a specific file
-just coverage                  # generate coverage report
+just test                                        # run tests (project venv, fast)
+just test-all --group dj52                       # run all tests, Django 5.2
+just test-all --group psycopg3 --group dj52      # run with PostgreSQL backend
+just test tests/test_foo.py                      # run a specific file
+just coverage                                    # generate coverage report
 ```
 
 ### Linting / Formatting

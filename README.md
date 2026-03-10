@@ -9,11 +9,17 @@ based on the tooling and workflow patterns from
 
 ### On GitHub (recommended)
 
+**Prerequisite:** Create a [classic PAT](https://github.com/settings/tokens/new) with the
+**`workflow`** scope and add it as a repo secret named **`BOOTSTRAP_TOKEN`**.
+GitHub's default `GITHUB_TOKEN` cannot push `.github/workflows/` files, so the bootstrap PR
+will fail without this token.
+
 1. Click **"Use this template"** → **"Create a new repository"**
-2. After the repo is created, the **Bootstrap** GitHub Action will run automatically on your
+2. Add the `BOOTSTRAP_TOKEN` secret (Settings → Secrets and variables → Actions)
+3. After the repo is created, the **Bootstrap** GitHub Action will run automatically on your
    first push to `main`. It reads the repo name, owner, and description from GitHub's metadata
    and opens a PR with all template files rendered.
-3. Review and merge the PR.
+4. Review and merge the PR.
 4. **Choose your test strategy** — delete one of the two test workflows:
    - Keep `test.yml`, delete `test-db.yml` — SQLite only (like django-typer)
    - Keep `test-db.yml`, delete `test.yml` — full DB matrix (like django-enum)
