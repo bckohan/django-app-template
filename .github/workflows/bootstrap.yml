@@ -51,12 +51,7 @@ jobs:
 
           # If email isn't on the public profile, fetch from the verified emails list
           if [ -z "$AUTHOR_EMAIL" ]; then
-            AUTHOR_EMAIL=$(gh api /user/emails 2>/dev/null | python3 -c "
-import json, sys
-emails = json.load(sys.stdin)
-primary = next((e['email'] for e in emails if e.get('primary') and e.get('verified')), '')
-print(primary)
-" 2>/dev/null || true)
+            AUTHOR_EMAIL=$(gh api /user/emails 2>/dev/null | python3 -c "import json,sys; emails=json.load(sys.stdin); print(next((e['email'] for e in emails if e.get('primary') and e.get('verified')), ''))" 2>/dev/null || true)
           fi
 
           if [ -z "$AUTHOR_NAME" ]; then
