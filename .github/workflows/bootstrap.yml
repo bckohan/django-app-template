@@ -8,6 +8,7 @@ name: Bootstrap Repository
 permissions:
   contents: write
   pull-requests: write
+  workflows: write
 
 on:
   push:
