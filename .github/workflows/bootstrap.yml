@@ -1,7 +1,6 @@
 name: Bootstrap Repository
 
-# Runs automatically on the first push to main when cookiecutter.json is present
-# (i.e., the repo was just created from the template and hasn't been configured yet).
+# Run manually via Actions → Bootstrap Repository → Run workflow.
 # Derives all values from the GitHub repository metadata and creates a PR with the
 # rendered template files.
 
@@ -10,8 +9,6 @@ permissions:
   pull-requests: write
 
 on:
-  push:
-    branches: ['main']
   workflow_dispatch:
 
 jobs:

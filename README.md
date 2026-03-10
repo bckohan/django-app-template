@@ -16,9 +16,9 @@ will fail without this token.
 
 1. Click **"Use this template"** → **"Create a new repository"**
 2. Add the `BOOTSTRAP_TOKEN` secret (Settings → Secrets and variables → Actions)
-3. After the repo is created, the **Bootstrap** GitHub Action will run automatically on your
-   first push to `main`. It reads the repo name, owner, and description from GitHub's metadata
-   and opens a PR with all template files rendered.
+3. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
+   It reads the repo name, owner, and description from GitHub's metadata and opens a PR
+   with all template files rendered.
 4. Review and merge the PR.
 4. **Choose your test strategy** — delete one of the two test workflows:
    - Keep `test.yml`, delete `test-db.yml` — SQLite only (like django-typer)

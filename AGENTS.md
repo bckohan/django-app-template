@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A [cookiecutter](https://cookiecutter.readthedocs.io/) GitHub template for bootstrapping new Django app repositories. The template is modeled after [django-enum](https://github.com/django-commons/django-enum) and [django-typer](https://github.com/django-commons/django-typer).
 
-When a new repo is created from this template, `.github/workflows/bootstrap.yml` auto-runs on first push to `main`, derives all values from the GitHub API, renders the cookiecutter template in-place, and opens a PR.
+When a new repo is created from this template, `.github/workflows/bootstrap.yml` is triggered manually via workflow_dispatch (Actions → Bootstrap Repository → Run workflow). It derives all values from the GitHub API, renders the cookiecutter template in-place, and opens a PR.
 
 **Bootstrap requires a `BOOTSTRAP_TOKEN` repo secret** — a classic PAT with the `workflow` OAuth scope. `GITHUB_TOKEN` cannot push `.github/workflows/` files (a hard GitHub restriction, not fixable via the `permissions` block). The workflow falls back to `github.token` if the secret is absent, which will fail for workflow files.
 
