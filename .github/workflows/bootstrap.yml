@@ -10,6 +10,11 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      database_tests:
+        description: "Include database testing (PostgreSQL, MySQL, MariaDB, Oracle)"
+        type: boolean
+        default: false
 
 jobs:
   bootstrap:
@@ -113,6 +118,41 @@ jobs:
           # Remove this bootstrap workflow (replaced by the rendered workflows)
           rm -f .github/workflows/bootstrap.yml
 
+          # Select test workflow based on database_tests input
+          if [ "${{ inputs.database_tests }}" = "true" ]; then
+            # Use the database test workflow; replace the SQLite-only one
+            rm -f .github/workflows/test.yml
+            mv .github/workflows/test-db.yml .github/workflows/test.yml
+          else
+            # SQLite-only: discard the database test workflow
+            rm -f .github/workflows/test-db.yml
+          fi
+
+      - name: Strip database dependency groups
+        if: steps.check.outputs.needed == 'true' && !inputs.database_tests
+        run: |
+          python3 << 'PYEOF'
+          import re
+
+          DB_GROUPS = ['psycopg2', 'psycopg3', 'mysqlclient14', 'mysqlclient2x', 'cx_oracle', 'oracledb']
+
+          with open('pyproject.toml') as f:
+              content = f.read()
+
+          # Remove DB dependency group lines (e.g. psycopg2 = ["psycopg2>=2.9.10"])
+          for g in DB_GROUPS:
+              content = re.sub(rf'^{re.escape(g)}\s*=\s*\[.*?\]\n', '', content, flags=re.MULTILINE)
+
+          # Remove DB-only conflict sub-arrays from conflicts = [...]
+          # Matches inner [...] blocks whose entries are all DB groups
+          db_pat = '|'.join(re.escape(g) for g in DB_GROUPS)
+          block_pat = rf'\n  \[\n(?:    \{{ group = "(?:{db_pat})" \}},\n)+  \],'
+          content = re.sub(block_pat, '', content)
+
+          with open('pyproject.toml', 'w') as f:
+              f.write(content)
+          PYEOF
+
       - name: Create Pull Request
         if: steps.check.outputs.needed == 'true'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
@@ -137,12 +177,11 @@ jobs:
             | author | ${{ steps.meta.outputs.author_name }} |
             | email | ${{ steps.meta.outputs.author_email }} |
 
+            **Test strategy**: ${{ inputs.database_tests && 'Database matrix (SQLite + PostgreSQL + MySQL + MariaDB + Oracle)' || 'SQLite only' }}
+
             **Next steps after merging**
 
-            1. Choose your test strategy:
-               - **No database testing** (like django-typer): delete `.github/workflows/test-db.yml`
-               - **Database testing** (like django-enum): delete `.github/workflows/test.yml`
-            2. Add your source code to `src/${{ steps.meta.outputs.package_name }}/`
-            3. Update `pyproject.toml` with your real dependencies and classifiers
-            4. Configure repository secrets: `CODECOV_TOKEN`, `SCORECARD_TOKEN`
-            5. Enable ReadTheDocs for the repo (optional)
+            1. Add your source code to `src/${{ steps.meta.outputs.package_name }}/`
+            2. Update `pyproject.toml` with your real dependencies and classifiers
+            3. Configure repository secrets: `CODECOV_TOKEN`, `SCORECARD_TOKEN`
+            4. Enable ReadTheDocs for the repo (optional)

@@ -94,7 +94,7 @@ just manage [any command]
 
 ## Test Strategy
 
-Two workflow files are generated: `test.yml` (SQLite only, runs on Linux/Windows/macOS) and `test-db.yml` (full matrix: SQLite + PostgreSQL + MySQL + MariaDB + Oracle). After bootstrapping, the user deletes whichever they don't need.
+The bootstrap workflow has a **Database tests** checkbox (off by default). When unchecked, only `test.yml` (SQLite only) is kept and DB dependency groups are stripped from `pyproject.toml`. When checked, `test-db.yml` (full matrix: SQLite + PostgreSQL + MySQL + MariaDB + Oracle) is renamed to `test.yml` and DB groups are retained.
 
 `tests/settings.py` selects the database backend via the `RDBMS` environment variable (`sqlite`, `postgres`, `mysql`, `mariadb`, `oracle`).
 
