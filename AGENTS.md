@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# AGENTS.md
 
 ## What This Repo Is
 
@@ -45,7 +43,7 @@ The bootstrap workflow derives these from GitHub — do not prompt for them:
 
 Smoke test — renders using default `cookiecutter.json` values:
 ```bash
-rm -rf /tmp/cc-test && uvx cookiecutter . --no-input --output-dir /tmp/cc-test
+rm -rf /tmp/cc-test && uvx --with pyfiglet cookiecutter . --no-input --output-dir /tmp/cc-test
 ```
 Output lands at `/tmp/cc-test/my-django-app/`.
 
