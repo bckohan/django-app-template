@@ -111,10 +111,11 @@ jobs:
         if: steps.check.outputs.needed == 'true'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
         with:
-          # BOOTSTRAP_TOKEN must be a PAT with the 'workflow' OAuth scope.
+          # BOOTSTRAP_TOKEN must be a fine-grained PAT scoped to this repo with
+          # Contents, Pull requests, and Workflows read/write permissions.
           # GITHUB_TOKEN cannot push .github/workflows/ files (GitHub restriction).
-          # Create a classic PAT at Settings → Developer settings → Personal access tokens,
-          # enable the 'workflow' scope, and add it as repo secret BOOTSTRAP_TOKEN.
+          # Create one at Settings → Developer settings → Personal access tokens (fine-grained)
+          # and add it as repo secret BOOTSTRAP_TOKEN.
           token: ${{ secrets.BOOTSTRAP_TOKEN || github.token }}
           branch: bootstrap/initial-setup
           delete-branch: true

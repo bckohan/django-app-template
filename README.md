@@ -9,8 +9,9 @@ based on the tooling and workflow patterns from
 
 ### On GitHub (recommended)
 
-**Prerequisite:** Create a [classic PAT](https://github.com/settings/tokens/new) with the
-**`workflow`** scope and add it as a repo secret named **`BOOTSTRAP_TOKEN`**.
+**Prerequisite:** Create a [fine-grained PAT](https://github.com/settings/personal-access-tokens/new)
+scoped to the new repo with **Contents**, **Pull requests**, and **Workflows** set to
+**Read and write**, then add it as a repo secret named **`BOOTSTRAP_TOKEN`**.
 GitHub's default `GITHUB_TOKEN` cannot push `.github/workflows/` files, so the bootstrap PR
 will fail without this token.
 

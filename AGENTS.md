@@ -8,7 +8,7 @@ A [cookiecutter](https://cookiecutter.readthedocs.io/) GitHub template for boots
 
 When a new repo is created from this template, `.github/workflows/bootstrap.yml` is triggered manually via workflow_dispatch (Actions → Bootstrap Repository → Run workflow). It derives all values from the GitHub API, renders the cookiecutter template in-place, and opens a PR.
 
-**Bootstrap requires a `BOOTSTRAP_TOKEN` repo secret** — a classic PAT with the `workflow` OAuth scope. `GITHUB_TOKEN` cannot push `.github/workflows/` files (a hard GitHub restriction, not fixable via the `permissions` block). The workflow falls back to `github.token` if the secret is absent, which will fail for workflow files.
+**Bootstrap requires a `BOOTSTRAP_TOKEN` repo secret** — a fine-grained PAT scoped to the repo with **Contents**, **Pull requests**, and **Workflows** read/write permissions. `GITHUB_TOKEN` cannot push `.github/workflows/` files (a hard GitHub restriction, not fixable via the `permissions` block). The workflow falls back to `github.token` if the secret is absent, which will fail for workflow files.
 
 ## Repo Structure
 
