@@ -1,9 +1,25 @@
 # django-app-template
 
-A [cookiecutter](https://cookiecutter.readthedocs.io) GitHub template for Django apps,
-based on the tooling and workflow patterns from
-[django-enum](https://github.com/django-commons/django-enum) and
-[django-typer](https://github.com/django-commons/django-typer).
+This is my template for Django apps, based on the tooling and workflow patterns from:
+   
+   * [django-enum](https://github.com/django-commons/django-enum)
+   * [django-typer](https://github.com/django-commons/django-typer)
+
+Key features and design choices, include:
+
+   * Toolchain:
+      * [uv](https://docs.astral.sh/uv/)
+      * [ruff](https://docs.astral.sh/ruff/)
+      * [pytest](https://pytest.org/)
+      * [just](https://just.systems/)
+      * [pre-commit](https://pre-commit.com/)
+      * [mypy](https://mypy-lang.org/) & [pyright](https://github.com/microsoft/pyright)
+      * [Sphinx](https://www.sphinx-doc.org/)
+   * We do not use tox or nox. CI matrix permutations are tested using uv with dependency    groups and just recipe shortcuts. For example to run all tests against python 3.13 and Django 5.2:
+
+      ``just test-all -p 3.13 --group dj52``
+   * The bootstrap workflow is configurable to run tests against just sqlite or all Django supported RDBMS.
+   * Release workflow is triggered on tag creation with semver naming patterns - it uses trusted publishing with PyPi.
 
 ## Using This Template
 
@@ -74,7 +90,7 @@ All values are derived automatically from GitHub repository metadata — no manu
 - **Package manager:** [uv](https://docs.astral.sh/uv/)
 - **Task runner:** [just](https://just.systems/)
 - **Linter / formatter:** [ruff](https://docs.astral.sh/ruff/)
-- **Type checking:** mypy + pyright
-- **Docs:** Sphinx + Furo + ReadTheDocs
-- **Tests:** pytest + pytest-django
-- **CI:** GitHub Actions
+- **Type checking:** [mypy](https://mypy-lang.org/) + [pyright](https://github.com/microsoft/pyright)
+- **Docs:** [Sphinx](https://www.sphinx-doc.org/) + [Furo](https://pradyunsg.me/furo/) + [ReadTheDocs](https://readthedocs.org/)
+- **Tests:** [pytest](https://pytest.org/) + [pytest-django](https://pytest-django.readthedocs.io/)
+- **CI:** [GitHub Actions](https://github.com/features/actions)

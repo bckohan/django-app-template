@@ -1,7 +1,7 @@
 r"""
 ::
 
-    __FIGLET__
+__FIGLET__
 
 {{cookiecutter.description}}
 """
