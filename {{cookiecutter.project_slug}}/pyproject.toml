@@ -166,7 +166,6 @@ DJANGO_SETTINGS_MODULE = "tests.settings"
 python_files = "test*.py"
 norecursedirs = "*.egg .eggs dist build docs .tox .git __pycache__"
 {% if cookiecutter.playwright == "true" %}
-asyncio_mode = "strict"
 markers = [
     "ui: mark test as a UI/browser test requiring Playwright",
 ]{% endif %}
