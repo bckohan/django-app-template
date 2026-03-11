@@ -122,6 +122,10 @@ test = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "pytest-django>=4.10.0",
+{% if cookiecutter.playwright == "true" %}    "playwright>=1.58.0",
+    "pytest-playwright>=0.7.0",
+    "pytest-asyncio>=0.24.0",
+{% endif %}
 ]
 dev = [
     { include-group = "typing" },
@@ -162,6 +166,7 @@ sphinx = true
 DJANGO_SETTINGS_MODULE = "tests.settings"
 python_files = "test*.py"
 norecursedirs = "*.egg .eggs dist build docs .tox .git __pycache__"
+asyncio_mode = "auto"
 addopts = [
     "--strict-markers",
     "--cov={{cookiecutter.package_name}}",

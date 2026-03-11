@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 import inspect
 import os
 import sys
@@ -105,8 +104,28 @@ def pytest_runtest_call(item):
             pass
 
 
-def pytest_configure(config: pytest.Config) -> None:
+{% if cookiecutter.playwright == "true" %}
+def _install_playwright_browsers() -> None:
+    import subprocess
+    cmd = [sys.executable, "-m", "playwright", "install", "chromium"]
+    subprocess.run(cmd, check=True)
 
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> None:
+    any_ui = any(item.get_closest_marker("ui") is not None for item in items)
+
+    if any_ui and not getattr(config, "_did_install_playwright", False):
+        setattr(config, "_did_install_playwright", True)
+        _install_playwright_browsers()
+
+{% endif %}
+
+def pytest_configure(config: pytest.Config) -> None:
+{% if cookiecutter.playwright == "true" %}
+    if not config.getoption("--headed"):
+        os.environ["HEADLESS"] = "1"
+{% endif %}
     if os.getenv("GITHUB_ACTIONS") == "true":
         # verify that the environment is set up correctly - this is used in CI to make
         # sure we're testing against the dependencies we think we are

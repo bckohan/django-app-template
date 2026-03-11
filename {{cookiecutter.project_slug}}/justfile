@@ -224,7 +224,7 @@ debug-test *TESTS:
     @just run pytest \
       -o addopts='-ra -q' \
       -s --trace --pdbcls=IPython.terminal.debugger:Pdb \
-      {{ lb }}TESTS{{ rb }}
+      --headed {{ lb }}TESTS{{ rb }}
 
 # run the pre-commit checks
 precommit:

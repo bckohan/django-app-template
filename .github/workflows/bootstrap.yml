@@ -23,6 +23,10 @@ on:
         description: "Include OpenSSF Scorecard workflow and badge"
         type: boolean
         default: false
+      playwright:
+        description: "Include Playwright browser testing dependencies"
+        type: boolean
+        default: true
       license:
         description: "License (MIT, Apache, BSD-3, or None)"
         type: choice
@@ -124,6 +128,7 @@ jobs:
             database_tests="${{ inputs.database_tests }}" \
             django_commons_coc="${{ inputs.django_commons_coc }}" \
             scorecard="${{ inputs.scorecard }}" \
+            playwright="${{ inputs.playwright }}" \
             license="${{ inputs.license }}"
 
       - name: Apply rendered template
@@ -201,6 +206,8 @@ jobs:
             **Code of Conduct**: ${{ inputs.django_commons_coc && 'Django Commons CoC (update_coc.yml included)' || 'Not included' }}
 
             **OpenSSF Scorecard**: ${{ inputs.scorecard && 'Enabled (scorecard.yml included, badge in README)' || 'Not included' }}
+
+            **Playwright**: ${{ inputs.playwright && 'Enabled' || 'Not included' }}
 
             **License**: ${{ inputs.license }}
 

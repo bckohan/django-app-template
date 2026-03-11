@@ -10,6 +10,7 @@
     "database_tests": "false",
     "django_commons_coc": "false",
     "scorecard": "false",
+    "playwright": "true",
     "license": ["MIT", "Apache", "BSD-3", "None"],
     "_copy_without_render": [
         ".github/workflows/test.yml",

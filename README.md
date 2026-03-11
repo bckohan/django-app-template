@@ -1,6 +1,6 @@
 # django-app-template
 
-This is my template for Django apps, based on the tooling and workflow patterns from:
+This is my template for Django apps (*not Django sites!*), based on the tooling and workflow patterns from:
    
    * [django-enum](https://github.com/django-commons/django-enum)
    * [django-typer](https://github.com/django-commons/django-typer)
@@ -27,13 +27,13 @@ Key features and design choices, include:
    * Release workflow is triggered on tag creation with semver naming patterns - it uses trusted publishing with PyPi.
    * Testing
       * In CI a pip freeze artifact is created for each test run
-      * A ``just debug-test <test>`` recipe drops you into the debugger at the start of a test.
+      * A ``just debug-test <test>`` recipe drops you into the debugger at the start of a test. If the test is a ``ui`` test and you have elected to use playwright a browser will open in headed mode.
    * Configurable options include:
       * Database testing strategy (sqlite or all)
       * Use [Django Commons](https://github.com/django-commons/membership) [Code of Conduct](https://github.com/django-commons/membership/blob/main/CODE_OF_CONDUCT.md).
       * Use [OpenSSF Scorecard](https://securityscorecards.dev/)
       * License: MIT, Apache, BSD-3 or None
-
+      * Use playwright for UI testing
 
 ## Using This Template
 
