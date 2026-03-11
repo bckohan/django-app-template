@@ -105,6 +105,16 @@ def pytest_runtest_call(item):
 
 
 {% if cookiecutter.playwright == "true" %}
+@pytest.fixture(scope="session", autouse=True)
+def _pre_create_test_db(django_test_environment, django_db_setup, request):
+    """Force Django test DB creation before any async event loops start.
+
+    Also sets DJANGO_ALLOW_ASYNC_UNSAFE when any ui-marked tests are collected
+    so that Playwright's internal event loop doesn't block sync Django ORM calls.
+    """
+    if any(item.get_closest_marker("ui") for item in request.session.items):
+        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "1"
+
 def _install_playwright_browsers() -> None:
     import subprocess
     cmd = [sys.executable, "-m", "playwright", "install", "chromium"]

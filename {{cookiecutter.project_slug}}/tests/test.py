@@ -2,11 +2,9 @@ import pytest
 from django.test import TestCase
 {% if cookiecutter.playwright == "true" %}
 import os
-from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from playwright.sync_api import sync_playwright, expect as sync_expect
-from playwright.async_api import Page, expect
+from playwright.sync_api import Page, sync_playwright, expect
 
 
 # ── Class-based UI tests (unittest-style, sync) ───────────────────────────────
@@ -18,7 +16,6 @@ from playwright.async_api import Page, expect
 
 #     @classmethod
 #     def setUpClass(cls):
-#         os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "1"
 #         super().setUpClass()
 #         cls.playwright = sync_playwright().start()
 #         cls.browser = cls.playwright.chromium.launch(
@@ -32,7 +29,6 @@ from playwright.async_api import Page, expect
 #         cls.browser.close()
 #         cls.playwright.stop()
 #         super().tearDownClass()
-#         del os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"]
 
 #     def setUp(self):
 #         admin_username = "admin"
@@ -50,37 +46,42 @@ from playwright.async_api import Page, expect
 
 # ── Pytest functional UI tests (async) ────────────────────────────────────────
 #
-# pytest-playwright provides async `page` / `browser` / `context` fixtures
-# automatically when asyncio_mode = "auto" is set in pytest config.
-# Django ORM calls are wrapped with sync_to_async so no event-loop conflicts
-# occur — DJANGO_ALLOW_ASYNC_UNSAFE is not required.
+# pytest-playwright provides `page` / `browser` / `context` fixtures
+#
+# browser_type_launch_args is a pytest-playwright hook fixture. Overriding it
+# here passes the HEADLESS env var (set by --headed in conftest.pytest_configure)
+# through to the page fixture, mirroring the class-based approach.
+
+# @pytest.fixture(scope="session")
+# def browser_type_launch_args(browser_type_launch_args: dict) -> dict:
+#     return {**browser_type_launch_args, "headless": bool(os.environ.get("HEADLESS"))}
 
 # @pytest.fixture
-# async def admin_user(db):
+# def admin_user(db):
 #     """Create and return a superuser for UI tests."""
-#     return await sync_to_async(get_user_model().objects.create_superuser)(
+#     return get_user_model().objects.create_superuser)(
 #         username="admin",
 #         password="password",
 #     )
 
 
 # @pytest.fixture
-# async def logged_in_page(page: Page, live_server, admin_user):
-#     """An async Playwright page already logged in to the Django admin."""
-#     await page.goto(f"{live_server.url}/admin/login/")
-#     await page.fill("input[name='username']", "admin")
-#     await page.fill("input[name='password']", "password")
-#     await page.click("input[type='submit']")
-#     await expect(page).to_have_url(f"{live_server.url}/admin/")
+# def logged_in_page(page: Page, live_server, admin_user):
+#     """An Playwright page already logged in to the Django admin."""
+#     page.goto(f"{live_server.url}/admin/login/")
+#     page.fill("input[name='username']", "admin")
+#     page.fill("input[name='password']", "password")
+#     page.click("input[type='submit']")
+#     expect(page).to_have_url(f"{live_server.url}/admin/")
 #     return page
 
 
 # @pytest.mark.ui
 # @pytest.mark.django_db(transaction=True)
-# async def test_admin_login(logged_in_page: Page, live_server):
+# def test_admin_login(logged_in_page: Page, live_server):
 #     """Verify an admin user can log in and reach the site administration page."""
-#     await expect(logged_in_page).to_have_url(f"{live_server.url}/admin/")
-#     await expect(logged_in_page.locator("h1")).to_contain_text("Site administration")
+#     expect(logged_in_page).to_have_url(f"{live_server.url}/admin/")
+#     expect(logged_in_page.locator("h1")).to_contain_text("Site administration")
 
 {% endif %}
 

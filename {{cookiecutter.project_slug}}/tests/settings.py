@@ -96,4 +96,8 @@ INSTALLED_APPS = [
     "django.contrib.admin",
 ]
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+SITE_ID = 1
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
