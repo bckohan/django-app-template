@@ -61,7 +61,7 @@ will fail without this token.
 ### Locally
 
 ```bash
-uvx --with pyfiglet cookiecutter gh:bckohan/django-app-template
+uvx --with pyfiglet --with jinja2-time cookiecutter gh:bckohan/django-app-template
 ```
 
 ## What Gets Generated
