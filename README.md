@@ -20,10 +20,8 @@ will fail without this token.
 3. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
    It reads the repo name, owner, and description from GitHub's metadata and opens a PR
    with all template files rendered.
+   * **Choose your test strategy** - By default tests will run against sqlite, to run tests against all Django supported RDBMS, check the databases box.
 4. Review and merge the PR.
-4. **Choose your test strategy** — delete one of the two test workflows:
-   - Keep `test.yml`, delete `test-db.yml` — SQLite only (like django-typer)
-   - Keep `test-db.yml`, delete `test.yml` — full DB matrix (like django-enum)
 
 ### Locally
 

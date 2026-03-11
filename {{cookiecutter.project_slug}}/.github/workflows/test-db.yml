@@ -1,4 +1,4 @@
-name: Test (Databases)
+name: Test
 
 # Full database testing workflow: PostgreSQL, MySQL, MariaDB, Oracle, plus
 # SQLite on Windows and macOS. Use this if your app has database-specific
