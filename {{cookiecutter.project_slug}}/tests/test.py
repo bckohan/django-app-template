@@ -22,7 +22,7 @@ from playwright.async_api import Page, expect
 #         super().setUpClass()
 #         cls.playwright = sync_playwright().start()
 #         cls.browser = cls.playwright.chromium.launch(
-#             headless=os.environ.get("HEADLESS", "true") == "true"
+#             headless==bool(os.environ.get("HEADLESS", None))
 #         )
 #         cls.page = cls.browser.new_page()
 
@@ -95,11 +95,11 @@ from playwright.async_api import Page, expect
 
 # ── Non-browser pytest functional style tests ────────────────────────────────────────
 
-# @pytest.mark.django_db
-# def test_example():
-#     """Example pytest functional test with database access."""
-#     from django.contrib.auth import get_user_model
-#     User = get_user_model()
-#     user = User.objects.create_user(username="alice", password="secret")
-#     assert User.objects.filter(username="alice").exists()
-#     assert user.check_password("secret")
+@pytest.mark.django_db
+def test_example():
+    """Example pytest functional test with database access."""
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    user = User.objects.create_user(username="alice", password="secret")
+    assert User.objects.filter(username="alice").exists()
+    assert user.check_password("secret")

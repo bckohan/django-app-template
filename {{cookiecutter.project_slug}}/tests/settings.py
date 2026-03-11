@@ -12,6 +12,10 @@ DEBUG = True
 SECRET_KEY = "psst"
 USE_TZ = True
 
+STATIC_ROOT = Path(__file__).parent / "global_static"
+STATIC_URL = "/static/"
+
+
 {% if cookiecutter.database_tests == "true" %}rdbms = os.environ.get("RDBMS", "sqlite")
 
 if rdbms == "sqlite":
@@ -82,9 +86,14 @@ elif rdbms == "oracle":  # pragma: no cover
 {% endif %}
 
 INSTALLED_APPS = [
-    "django.contrib.contenttypes",
-    "django.contrib.auth",
     "{{cookiecutter.package_name}}",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.admin",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
