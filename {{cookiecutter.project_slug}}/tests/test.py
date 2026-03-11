@@ -19,7 +19,7 @@ from playwright.sync_api import Page, sync_playwright, expect
 #         super().setUpClass()
 #         cls.playwright = sync_playwright().start()
 #         cls.browser = cls.playwright.chromium.launch(
-#             headless==bool(os.environ.get("HEADLESS", None))
+#             headless=bool(os.environ.get("HEADLESS", None))
 #         )
 #         cls.page = cls.browser.new_page()
 
@@ -41,8 +41,12 @@ from playwright.sync_api import Page, sync_playwright, expect
 #         self.page.fill("input[name='username']", admin_username)
 #         self.page.fill("input[name='password']", admin_password)
 #         self.page.click("input[type='submit']")
-#         sync_expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
+#         expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
 
+#    def test_admin_login(self):
+#        """Verify an admin user can log in and reach the site administration page."""
+#        expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
+#        expect(self.page.locator("h1")).to_contain_text("Site administration")
 
 # ── Pytest functional UI tests (async) ────────────────────────────────────────
 #
@@ -59,7 +63,7 @@ from playwright.sync_api import Page, sync_playwright, expect
 # @pytest.fixture
 # def admin_user(db):
 #     """Create and return a superuser for UI tests."""
-#     return get_user_model().objects.create_superuser)(
+#     return get_user_model().objects.create_superuser(
 #         username="admin",
 #         password="password",
 #     )
