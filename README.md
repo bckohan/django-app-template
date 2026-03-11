@@ -20,7 +20,8 @@ will fail without this token.
 3. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
    It reads the repo name, owner, and description from GitHub's metadata and opens a PR
    with all template files rendered.
-   * **Choose your test strategy** - By default tests will run against sqlite, to run tests against all Django supported RDBMS, check the databases box.
+   * **Choose your test strategy** - By default tests will run against SQLite only. To run tests against all Django-supported RDBMS, check the **database tests** box.
+   * **Choose your Code of Conduct** - By default no Code of Conduct is included. Check the **Django Commons Code of Conduct** box to include `CODE_OF_CONDUCT.md` and the `update_coc.yml` workflow that keeps it synced with [django-commons](https://github.com/django-commons/membership).
 4. Review and merge the PR.
 
 ### Locally

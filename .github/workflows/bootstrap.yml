@@ -15,6 +15,10 @@ on:
         description: "Include database testing (PostgreSQL, MySQL, MariaDB, Oracle)"
         type: boolean
         default: false
+      django_commons_coc:
+        description: "Include Django Commons Code of Conduct (update_coc.yml workflow)"
+        type: boolean
+        default: false
 
 jobs:
   bootstrap:
@@ -118,6 +122,12 @@ jobs:
           # Remove this bootstrap workflow (replaced by the rendered workflows)
           rm -f .github/workflows/bootstrap.yml
 
+          # Select Code of Conduct workflow based on django_commons_coc input
+          if [ "${{ inputs.django_commons_coc }}" != "true" ]; then
+            rm -f .github/workflows/update_coc.yml
+            rm -f CODE_OF_CONDUCT.md
+          fi
+
           # Select test workflow based on database_tests input
           if [ "${{ inputs.database_tests }}" = "true" ]; then
             # Use the database test workflow; replace the SQLite-only one
@@ -178,6 +188,8 @@ jobs:
             | email | ${{ steps.meta.outputs.author_email }} |
 
             **Test strategy**: ${{ inputs.database_tests && 'Database matrix (SQLite + PostgreSQL + MySQL + MariaDB + Oracle)' || 'SQLite only' }}
+
+            **Code of Conduct**: ${{ inputs.django_commons_coc && 'Django Commons CoC (update_coc.yml included)' || 'Not included' }}
 
             **Next steps after merging**
 
