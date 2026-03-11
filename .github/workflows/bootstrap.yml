@@ -116,7 +116,7 @@ jobs:
           GH_OWNER:     ${{ steps.meta.outputs.github_owner }}
           YEAR:         ${{ steps.meta.outputs.year }}
         run: |
-          uvx --with pyfiglet cookiecutter . \
+          uvx --with pyfiglet  --with jinja2-time cookiecutter . \
             --no-input \
             --output-dir /tmp/rendered \
             project_slug="$REPO_NAME" \
