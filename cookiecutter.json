@@ -7,6 +7,8 @@
     "github_owner": "owner",
     "version": "0.1.0",
     "year": "2025",
+    "database_tests": "false",
+    "django_commons_coc": "false",
     "_copy_without_render": [
         ".github/workflows/test.yml",
         ".github/workflows/test-db.yml",

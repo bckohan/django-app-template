@@ -1,5 +1,5 @@
-import os
-from pathlib import Path
+{% if cookiecutter.database_tests == "true" %}import os
+{% endif %}from pathlib import Path
 
 try:
     import django_stubs_ext
@@ -12,7 +12,7 @@ DEBUG = True
 SECRET_KEY = "psst"
 USE_TZ = True
 
-rdbms = os.environ.get("RDBMS", "sqlite")
+{% if cookiecutter.database_tests == "true" %}rdbms = os.environ.get("RDBMS", "sqlite")
 
 if rdbms == "sqlite":
     DATABASES = {
@@ -73,6 +73,13 @@ elif rdbms == "oracle":  # pragma: no cover
         oracledb.init_oracle_client()
     except ImportError:
         pass
+{% else %}DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": Path(__file__).parent / "test.db",
+    }
+}
+{% endif %}
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",

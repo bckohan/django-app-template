@@ -51,7 +51,7 @@ conflicts = [
     { group = "dj52" },
     { group = "dj60" },
   ],
-  [
+{% if cookiecutter.database_tests == "true" %}  [
     { group = "mysqlclient2x" },
     { group = "mysqlclient14" },
   ],
@@ -63,7 +63,7 @@ conflicts = [
     { group = "cx_oracle" },
     { group = "oracledb" },
   ],
-]
+{% endif %}]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/{{cookiecutter.package_name}}"]
@@ -74,7 +74,8 @@ packages = ["src/{{cookiecutter.package_name}}"]
 "Repository"    = "https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}"
 "Issues"        = "https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/issues"
 "Changelog"     = "https://{{cookiecutter.project_slug}}.readthedocs.io/en/latest/changelog.html"
-"Code_of_Conduct" = "https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/blob/main/CODE_OF_CONDUCT.md"
+{% if cookiecutter.django_commons_coc == "true" %}"Code_of_Conduct" = "https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/blob/main/CODE_OF_CONDUCT.md"
+{% endif %}
 
 [dependency-groups]
 docs = [
@@ -86,13 +87,13 @@ docs = [
     "sphinx-tabs>=3.4.7",
     "sphinxcontrib-django>=2.5",
 ]
-psycopg2      = ["psycopg2>=2.9.10"]
+{% if cookiecutter.database_tests == "true" %}psycopg2      = ["psycopg2>=2.9.10"]
 psycopg3      = ["psycopg"]
 mysqlclient14 = ["mysqlclient==1.4.3"]
 mysqlclient2x = ["mysqlclient>=2.2.8"]
 cx_oracle     = ["cx-oracle>=8.3.0"]
 oracledb      = ["oracledb>=2.3.0"]
-dj42          = ["Django~=4.2; python_version < '3.13'"]
+{% endif %}dj42          = ["Django~=4.2; python_version < '3.13'"]
 dj52          = ["Django~=5.2"]
 dj60          = ["Django~=6.0; python_version >= '3.12'"]
 typing = [

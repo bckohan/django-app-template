@@ -16,7 +16,11 @@ GitHub's default `GITHUB_TOKEN` cannot push `.github/workflows/` files, so the b
 will fail without this token.
 
 1. Click **"Use this template"** → **"Create a new repository"**
-2. Add the `BOOTSTRAP_TOKEN` secret (Settings → Secrets and variables → Actions)
+2. Create a [fine-grained PAT](https://github.com/settings/personal-access-tokens/new)
+   scoped to the new repo with **Contents**, **Pull requests**, and **Workflows** set to
+   **Read and write**. We recommend setting the expiry time to as short as possible because this token will be one-time use by the boostrap workflow.
+   ![Multiple Subcommands Example](https://raw.githubusercontent.com/bckohan/django-app-template/main/PAT_perms.png)
+2. Add the `BOOTSTRAP_TOKEN` secret (Settings → Secrets and variables → Actions).
 3. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
    It reads the repo name, owner, and description from GitHub's metadata and opens a PR
    with all template files rendered.

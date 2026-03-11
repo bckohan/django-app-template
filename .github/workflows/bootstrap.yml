@@ -107,7 +107,9 @@ jobs:
             author_name="$AUTHOR_NAME" \
             author_email="$AUTHOR_EMAIL" \
             github_owner="$GH_OWNER" \
-            year="$YEAR"
+            year="$YEAR" \
+            database_tests="${{ inputs.database_tests }}" \
+            django_commons_coc="${{ inputs.django_commons_coc }}"
 
       - name: Apply rendered template
         if: steps.check.outputs.needed == 'true'
@@ -142,31 +144,6 @@ jobs:
           fi
           
           just fix  # run formatting and linter fixes
-
-      - name: Strip database dependency groups
-        if: steps.check.outputs.needed == 'true' && !inputs.database_tests
-        run: |
-          python3 << 'PYEOF'
-          import re
-
-          DB_GROUPS = ['psycopg2', 'psycopg3', 'mysqlclient14', 'mysqlclient2x', 'cx_oracle', 'oracledb']
-
-          with open('pyproject.toml') as f:
-              content = f.read()
-
-          # Remove DB dependency group lines (e.g. psycopg2 = ["psycopg2>=2.9.10"])
-          for g in DB_GROUPS:
-              content = re.sub(rf'^{re.escape(g)}\s*=\s*\[.*?\]\n', '', content, flags=re.MULTILINE)
-
-          # Remove DB-only conflict sub-arrays from conflicts = [...]
-          # Matches inner [...] blocks whose entries are all DB groups
-          db_pat = '|'.join(re.escape(g) for g in DB_GROUPS)
-          block_pat = rf'\n  \[\n(?:    \{{ group = "(?:{db_pat})" \}},\n)+  \],'
-          content = re.sub(block_pat, '', content)
-
-          with open('pyproject.toml', 'w') as f:
-              f.write(content)
-          PYEOF
 
       - name: Create Pull Request
         if: steps.check.outputs.needed == 'true'
