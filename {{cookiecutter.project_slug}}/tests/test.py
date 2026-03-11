@@ -43,10 +43,10 @@ from playwright.sync_api import Page, sync_playwright, expect
 #         self.page.click("input[type='submit']")
 #         expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
 
-#    def test_admin_login(self):
-#        """Verify an admin user can log in and reach the site administration page."""
-#        expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
-#        expect(self.page.locator("h1")).to_contain_text("Site administration")
+#     def test_admin_login(self):
+#         """Verify an admin user can log in and reach the site administration page."""
+#         expect(self.page).to_have_url(f"{self.live_server_url}/admin/")
+#         expect(self.page.locator("h1")).to_contain_text("Site administration")
 
 # ── Pytest functional UI tests (async) ────────────────────────────────────────
 #
