@@ -126,6 +126,8 @@ jobs:
           rm -rf '{{cookiecutter.project_slug}}'
           # Remove this bootstrap workflow (replaced by the rendered workflows)
           rm -f .github/workflows/bootstrap.yml
+          # Remove template-only assets
+          rm -f PAT_perms.png
 
           # Select Code of Conduct workflow based on django_commons_coc input
           if [ "${{ inputs.django_commons_coc }}" != "true" ]; then
