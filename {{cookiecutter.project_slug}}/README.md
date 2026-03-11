@@ -10,7 +10,9 @@
 [![Code Cov](https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/branch/main/graph/badge.svg?token=0IZOKN2DYL)](https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}})
 [![Test Status](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml?query=branch:main)
 [![Lint Status](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml?query=branch:main)
+{%- if cookiecutter.scorecard == "true" %}
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/badge)](https://securityscorecards.dev/viewer/?uri=github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}})
+{%- endif %}
 
 {{cookiecutter.description}}
 

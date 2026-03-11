@@ -20,6 +20,11 @@ Key features and design choices, include:
       ``just test-all -p 3.13 --group dj52``
    * The bootstrap workflow is configurable to run tests against just sqlite or all Django supported RDBMS.
    * Release workflow is triggered on tag creation with semver naming patterns - it uses trusted publishing with PyPi.
+   * Configurable options include:
+      * Database testing strategy (sqlite or all)
+      * Use [Django Commons](https://github.com/django-commons/membership) [Code of Conduct](https://github.com/django-commons/membership/blob/main/CODE_OF_CONDUCT.md).
+      * Use [OpenSSF Scorecard](https://securityscorecards.dev/)
+
 
 ## Using This Template
 

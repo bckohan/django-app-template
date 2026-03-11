@@ -56,9 +56,11 @@
         :target: https://djangopackages.org/packages/p/{{cookiecutter.project_slug}}/
         :alt: Published on Django Packages
 
+{%- if cookiecutter.scorecard == "true" %}
     .. image:: https://api.securityscorecards.dev/projects/github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/badge
         :target: https://securityscorecards.dev/viewer/?uri=github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}
         :alt: OSSF Scorecard
+{%- endif %}
 
 
 {{cookiecutter.description}}

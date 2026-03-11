@@ -9,6 +9,7 @@
     "year": "2025",
     "database_tests": "false",
     "django_commons_coc": "false",
+    "scorecard": "false",
     "_copy_without_render": [
         ".github/workflows/test.yml",
         ".github/workflows/test-db.yml",

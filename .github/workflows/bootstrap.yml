@@ -19,6 +19,10 @@ on:
         description: "Include Django Commons Code of Conduct (update_coc.yml workflow)"
         type: boolean
         default: false
+      scorecard:
+        description: "Include OpenSSF Scorecard workflow and badge"
+        type: boolean
+        default: false
 
 jobs:
   bootstrap:
@@ -109,7 +113,8 @@ jobs:
             github_owner="$GH_OWNER" \
             year="$YEAR" \
             database_tests="${{ inputs.database_tests }}" \
-            django_commons_coc="${{ inputs.django_commons_coc }}"
+            django_commons_coc="${{ inputs.django_commons_coc }}" \
+            scorecard="${{ inputs.scorecard }}"
 
       - name: Apply rendered template
         if: steps.check.outputs.needed == 'true'
@@ -133,6 +138,11 @@ jobs:
           if [ "${{ inputs.django_commons_coc }}" != "true" ]; then
             rm -f .github/workflows/update_coc.yml
             rm -f CODE_OF_CONDUCT.md
+          fi
+
+          # Remove Scorecard workflow and badge if not enabled
+          if [ "${{ inputs.scorecard }}" != "true" ]; then
+            rm -f .github/workflows/scorecard.yml
           fi
 
           # Select test workflow based on database_tests input
@@ -175,9 +185,11 @@ jobs:
 
             **Code of Conduct**: ${{ inputs.django_commons_coc && 'Django Commons CoC (update_coc.yml included)' || 'Not included' }}
 
+            **OpenSSF Scorecard**: ${{ inputs.scorecard && 'Enabled (scorecard.yml included, badge in README)' || 'Not included' }}
+
             **Next steps after merging**
 
             1. Add your source code to `src/${{ steps.meta.outputs.package_name }}/`
             2. Update `pyproject.toml` with your real dependencies and classifiers
-            3. Configure repository secrets: `CODECOV_TOKEN`, `SCORECARD_TOKEN`
+            3. Configure repository secrets: `CODECOV_TOKEN`${{ inputs.scorecard && ', `SCORECARD_TOKEN`' || '' }}
             4. Enable ReadTheDocs for the repo (optional)
