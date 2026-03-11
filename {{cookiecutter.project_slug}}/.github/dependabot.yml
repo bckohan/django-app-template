@@ -9,3 +9,18 @@ updates:
       gha-updates:
         patterns:
           - "*"
+  
+  # Python dependencies managed via uv (pyproject.toml)
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+        uv-runtime:
+          dependency-type: "production"
+          patterns:
+            - "*"
+        uv-dev:
+          dependency-type: "development"
+          patterns:
+            - "*"

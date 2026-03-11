@@ -175,6 +175,7 @@ jobs:
             rm -f .github/workflows/test-db.yml
           fi
           
+          just install  # generate lock file
           just fix  # run formatting and linter fixes
 
       - name: Create Pull Request
