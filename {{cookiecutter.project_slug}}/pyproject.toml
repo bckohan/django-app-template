@@ -6,8 +6,13 @@ requires-python = ">=3.10,<4.0"
 authors = [
   {name = "{{cookiecutter.author_name}}", email = "{{cookiecutter.author_email}}"},
 ]
-license = "MIT"
+{% if cookiecutter.license == "MIT" %}license = "MIT"
 license-files = [ "LICENSE" ]
+{% elif cookiecutter.license == "Apache" %}license = "Apache-2.0"
+license-files = [ "LICENSE" ]
+{% elif cookiecutter.license == "BSD-3" %}license = "BSD-3-Clause"
+license-files = [ "LICENSE" ]
+{% endif %}
 readme = "README.md"
 repository = "https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}"
 homepage = "https://{{cookiecutter.project_slug}}.readthedocs.io"
@@ -25,7 +30,10 @@ classifiers = [
     "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+{% if cookiecutter.license == "MIT" %}    "License :: OSI Approved :: MIT License",
+{% elif cookiecutter.license == "Apache" %}    "License :: OSI Approved :: Apache Software License",
+{% elif cookiecutter.license == "BSD-3" %}    "License :: OSI Approved :: BSD License",
+{% endif %}
     "Natural Language :: English",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",

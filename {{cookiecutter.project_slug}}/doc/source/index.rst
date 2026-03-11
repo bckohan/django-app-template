@@ -8,9 +8,19 @@
 
 .. only:: html
 
+{%- if cookiecutter.license == "MIT" %}
     .. image:: https://img.shields.io/badge/License-MIT-blue.svg
-        :target: https://lbesson.mit-license.org/
+        :target: https://opensource.org/licenses/MIT
         :alt: MIT License
+{%- elif cookiecutter.license == "Apache" %}
+    .. image:: https://img.shields.io/badge/License-Apache_2.0-blue.svg
+        :target: https://opensource.org/licenses/Apache-2.0
+        :alt: Apache 2.0 License
+{%- elif cookiecutter.license == "BSD-3" %}
+    .. image:: https://img.shields.io/badge/License-BSD_3--Clause-blue.svg
+        :target: https://opensource.org/licenses/BSD-3-Clause
+        :alt: BSD 3-Clause License
+{%- endif %}
 
     .. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
         :target: https://docs.astral.sh/ruff

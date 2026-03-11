@@ -14,16 +14,25 @@ Key features and design choices, include:
       * [just](https://just.systems/)
       * [pre-commit](https://pre-commit.com/)
       * [mypy](https://mypy-lang.org/) & [pyright](https://github.com/microsoft/pyright)
-      * [Sphinx](https://www.sphinx-doc.org/)
+      * [Sphinx](https://www.sphinx-doc.org/) & [Furo](https://pradyunsg.me/furo/)
+      * [doc8](https://github.com/PyCQA/doc8)
+      * [zizmor](https://woodruffw.github.io/zizmor/)
+      * [bandit](https://bandit.readthedocs.io/)
+      * [ReadTheDocs](https://readthedocs.org)
+      
    * We do not use tox or nox. CI matrix permutations are tested using uv with dependency    groups and just recipe shortcuts. For example to run all tests against python 3.13 and Django 5.2:
 
       ``just test-all -p 3.13 --group dj52``
    * The bootstrap workflow is configurable to run tests against just sqlite or all Django supported RDBMS.
    * Release workflow is triggered on tag creation with semver naming patterns - it uses trusted publishing with PyPi.
+   * Testing
+      * In CI a pip freeze artifact is created for each test run
+      * A ``just debug-test <test>`` recipe drops you into the debugger at the start of a test.
    * Configurable options include:
       * Database testing strategy (sqlite or all)
       * Use [Django Commons](https://github.com/django-commons/membership) [Code of Conduct](https://github.com/django-commons/membership/blob/main/CODE_OF_CONDUCT.md).
       * Use [OpenSSF Scorecard](https://securityscorecards.dev/)
+      * License: MIT, Apache, BSD-3 or None
 
 
 ## Using This Template
@@ -62,13 +71,14 @@ uvx cookiecutter gh:YOUR_ORG/django-app-template
 | `pyproject.toml` | hatchling build, uv dependency groups, ruff/mypy/pyright config |
 | `justfile` | task runner (setup, test, lint, docs, release) |
 | `src/<package>/` | source package with `__init__.py`, `apps.py`, `py.typed` |
-| `tests/settings.py` | multi-DB Django settings (reads `RDBMS` env var) |
+| `tests/settings.py` | sqlite or multi-DB Django settings (reads `RDBMS` env var) |
 | `doc/` | Sphinx + Furo docs with ReadTheDocs config |
 | `.github/workflows/test.yml` | SQLite testing on Linux + Windows + macOS |
 | `.github/workflows/test-db.yml` | Full DB testing (Postgres, MySQL, MariaDB, Oracle) |
 | `.github/workflows/lint.yml` | ruff + mypy + pyright static analysis |
 | `.github/workflows/release.yml` | Automated PyPI publish on version tags |
 | `.github/workflows/zizmor.yml` | CI security scanning |
+| `.github/workflows/bandit.yml` | Source security scanning |
 | `.github/workflows/scorecard.yml` | OpenSSF Scorecard |
 | `.github/workflows/update_coc.yml` | Auto-sync Code of Conduct from django-commons |
 | `.pre-commit-config.yaml` | pre-commit hooks (lint, format, docs, package) |
@@ -89,13 +99,3 @@ All values are derived automatically from GitHub repository metadata — no manu
 | `author_email` | owner's public GitHub email (falls back to `@users.noreply.github.com`) |
 | `github_owner` | repository owner (org or user) |
 | `year` | current year |
-
-## Tooling
-
-- **Package manager:** [uv](https://docs.astral.sh/uv/)
-- **Task runner:** [just](https://just.systems/)
-- **Linter / formatter:** [ruff](https://docs.astral.sh/ruff/)
-- **Type checking:** [mypy](https://mypy-lang.org/) + [pyright](https://github.com/microsoft/pyright)
-- **Docs:** [Sphinx](https://www.sphinx-doc.org/) + [Furo](https://pradyunsg.me/furo/) + [ReadTheDocs](https://readthedocs.org/)
-- **Tests:** [pytest](https://pytest.org/) + [pytest-django](https://pytest-django.readthedocs.io/)
-- **CI:** [GitHub Actions](https://github.com/features/actions)

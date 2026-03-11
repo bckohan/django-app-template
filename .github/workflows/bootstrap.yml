@@ -23,6 +23,15 @@ on:
         description: "Include OpenSSF Scorecard workflow and badge"
         type: boolean
         default: false
+      license:
+        description: "License (MIT, Apache, BSD-3, or None)"
+        type: choice
+        options:
+          - MIT
+          - Apache
+          - BSD-3
+          - None
+        default: MIT
 
 jobs:
   bootstrap:
@@ -114,7 +123,8 @@ jobs:
             year="$YEAR" \
             database_tests="${{ inputs.database_tests }}" \
             django_commons_coc="${{ inputs.django_commons_coc }}" \
-            scorecard="${{ inputs.scorecard }}"
+            scorecard="${{ inputs.scorecard }}" \
+            license="${{ inputs.license }}"
 
       - name: Apply rendered template
         if: steps.check.outputs.needed == 'true'
@@ -143,6 +153,11 @@ jobs:
           # Remove Scorecard workflow and badge if not enabled
           if [ "${{ inputs.scorecard }}" != "true" ]; then
             rm -f .github/workflows/scorecard.yml
+          fi
+
+          # Remove LICENSE file if no license selected
+          if [ "${{ inputs.license }}" = "None" ]; then
+            rm -f LICENSE
           fi
 
           # Select test workflow based on database_tests input
@@ -186,6 +201,8 @@ jobs:
             **Code of Conduct**: ${{ inputs.django_commons_coc && 'Django Commons CoC (update_coc.yml included)' || 'Not included' }}
 
             **OpenSSF Scorecard**: ${{ inputs.scorecard && 'Enabled (scorecard.yml included, badge in README)' || 'Not included' }}
+
+            **License**: ${{ inputs.license }}
 
             **Next steps after merging**
 

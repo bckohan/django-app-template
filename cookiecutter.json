@@ -10,12 +10,14 @@
     "database_tests": "false",
     "django_commons_coc": "false",
     "scorecard": "false",
+    "license": ["MIT", "Apache", "BSD-3", "None"],
     "_copy_without_render": [
         ".github/workflows/test.yml",
         ".github/workflows/test-db.yml",
         ".github/workflows/lint.yml",
         ".github/workflows/release.yml",
         ".github/workflows/zizmor.yml",
+        ".github/workflows/bandit.yml",
         ".github/workflows/scorecard.yml",
         ".github/workflows/update_coc.yml"
     ]

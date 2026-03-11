@@ -2,6 +2,7 @@
 
 [![CodeQL](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/github-code-scanning/codeql?query=branch:main)
 [![Zizmor](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/zizmor.yml/badge.svg?branch=main)](https://docs.zizmor.sh/)
+[![Bandit](https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/bandit.yml/badge.svg?branch=main)](https://bandit.readthedocs.io)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/badge)](https://securityscorecards.dev/viewer/?uri=github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}})
 
 ## Supported Versions
