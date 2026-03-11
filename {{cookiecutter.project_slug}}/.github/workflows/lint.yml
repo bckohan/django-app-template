@@ -75,11 +75,6 @@ jobs:
           PYTHON_PATH: ${{ steps.sp.outputs.python-path }}
         run: |
           just setup "$PYTHON_PATH"
-          if [[ "${{ matrix.django-version }}" =~ (a|b|rc) ]]; then
-            just test-lock Django==${{ matrix.django-version }}
-          else
-            just test-lock Django~=${{ matrix.django-version }}.0
-          fi
       - name: Install Emacs
         if: ${{ github.event.inputs.debug == 'true' }}
         run: sudo apt install emacs
@@ -89,9 +84,5 @@ jobs:
         timeout-minutes: 60
       - name: Run Static Analysis
         run: |
-          just check-lint
-          just check-format
-          just check-types
-          just check-package
-          just check-readme
-          just check-docs
+          just check -p "$PYTHON_PATH" --group "$TEST_DJANGO_VERSION"
+
