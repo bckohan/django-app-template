@@ -12,13 +12,13 @@ We provide a platform independent justfile with recipes for all the development 
 
 ``{{cookiecutter.project_slug}}`` uses [uv](https://docs.astral.sh/uv) for environment, package, and dependency management. ``just setup`` will install the necessary build tooling if you do not already have it:
 
-```bash
+```sh
 just setup <python version>
 ```
 
 **This will also install pre-commit** If you wish to submit code that does not pass pre-commit checks you can disable pre-commit by running:
 
-```bash
+```sh
 just run pre-commit uninstall
 ```
 
@@ -26,7 +26,7 @@ just run pre-commit uninstall
 
 To install all development dependencies run the ``install`` recipe:
 
-```bash
+```sh
 just install
 ```
 
@@ -42,7 +42,7 @@ git config --global core.symlinks true
 
 `{{cookiecutter.project_slug}}` documentation is generated using [Sphinx](https://www.sphinx-doc.org) with the [furo](https://github.com/pradyunsg/furo) theme. Any new feature PRs must provide updated documentation for the features added. To build the docs run doc8 to check for formatting issues then run Sphinx:
 
-```bash
+```sh
 just docs  # builds docs
 just check-docs  # lint the docs
 just check-docs-links  # check for broken links in the docs
@@ -50,7 +50,7 @@ just check-docs-links  # check for broken links in the docs
 
 Run the docs with auto rebuild using:
 
-```bash
+```sh
 just docs-live
 ```
 
@@ -60,13 +60,13 @@ just docs-live
 
 To fix formatting and linting problems that are fixable run:
 
-```bash
+```sh
 just fix
 ```
 
 To run all static analysis without automated fixing you can run:
 
-```bash
+```sh
 just check
 ```
 
@@ -104,7 +104,7 @@ This will set a breakpoint at the start of the test.
 
 The release workflow is triggered by tag creation. You must have [git tag signing enabled](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits). Our justfile has a release shortcut:
 
-```bash
+```sh
 just release x.x.x
 ```
 
@@ -112,6 +112,52 @@ just release x.x.x
 
 Run just with no recipe to see a list of all available commands:
 
-```bash
+```sh
 just
+```
+
+```sh
+bandit                       # run bandit static security analysis
+build                        # build docs and package
+build-docs                   # build the docs
+build-docs-html              # build html documentation
+check *ENV                   # run all static checks
+check-all *ENV               # run all checks including documentation link checking (slow)
+check-docs *ENV              # lint the documentation
+check-docs-links             # check documentation links for broken links
+check-format *ENV            # check if the code needs formatting
+check-lint *ENV              # lint the code
+check-package                # run package checks
+check-readme *ENV            # check that the readme renders
+check-types *ENV             # run all static type checking
+check-types-isolated *ENV    # run all static type checking in an isolated environment
+check-types-mypy *ENV        # run static type checking with mypy
+check-types-pyright *ENV     # run static type checking with pyright
+clean                        # remove all non-repository artifacts
+clean-docs                   # remove doc build artifacts
+clean-env                    # remove the virtual environment
+clean-git-ignored            # remove all git ignored files
+coverage                     # generate the test coverage report
+coverage-erase               # erase any coverage data
+debug-test *TESTS            # debug a test
+docs                         # build and open the documentation
+docs-live                    # serve the documentation with auto-reload
+fetch-refs LIB               # fetch intersphinx references for the given package
+fix *ENV                     # fix formatting, linting issues and import sorting
+format *ENV                  # format the code and sort imports
+install *OPTS="--all-extras" # update and install development dependencies
+install-precommit            # install git pre-commit hooks
+install-uv                   # install the uv package manager
+lint *ENV                    # sort imports and fix linting issues
+manage *COMMAND              # run the django admin
+open-docs                    # open the html documentation
+precommit                    # run the pre-commit checks
+release VERSION              # issue a release for the given semver string (e.g. 1.0.0)
+run +ARGS                    # run the command in the virtual environment
+setup python="python"        # setup the venv and pre-commit hooks
+sort-imports *ENV            # sort the python imports
+test *TESTS                  # run specific tests (project venv)
+test-all *ENV                # run all tests (pass django version, e.g. --group dj52)
+validate_version VERSION     # validate the given version string against the lib version
+zizmor                       # run zizmor security analysis of CI
 ```
