@@ -88,9 +88,3 @@ tests/
   settings.py                        # Django test settings (RDBMS env var for backend)
 doc/source/                          # Sphinx documentation source
 ```
-
-## CI Workflows
-
-Two test workflows are included — delete whichever you don't need:
-- `test.yml` — SQLite only, Linux/Windows/macOS matrix
-- `test-db.yml` — full matrix: SQLite + PostgreSQL + MySQL + MariaDB + Oracle

@@ -1,5 +1,65 @@
+.. include:: ./refs.rst
+.. role:: big
+
+{{ "=" * cookiecutter.project_slug|length }}
 {{cookiecutter.project_slug}}
 {{ "=" * cookiecutter.project_slug|length }}
+
+
+.. only:: html
+
+    .. image:: https://img.shields.io/badge/License-MIT-blue.svg
+        :target: https://lbesson.mit-license.org/
+        :alt: MIT License
+
+    .. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+        :target: https://docs.astral.sh/ruff
+        :alt: Ruff
+
+    .. image:: https://badge.fury.io/py/{{cookiecutter.project_slug}}.svg
+        :target: https://pypi.python.org/pypi/{{cookiecutter.project_slug}}/
+        :alt: PyPI Version
+
+    .. image:: https://img.shields.io/pypi/pyversions/{{cookiecutter.project_slug}}.svg
+        :target: https://pypi.python.org/pypi/{{cookiecutter.project_slug}}/
+        :alt: Python Versions
+
+    .. image:: https://img.shields.io/pypi/djversions/{{cookiecutter.project_slug}}.svg
+        :target: https://pypi.org/project/{{cookiecutter.project_slug}}/
+        :alt: Django Versions
+
+    .. image:: https://img.shields.io/pypi/status/{{cookiecutter.project_slug}}.svg
+        :target: https://pypi.python.org/pypi/{{cookiecutter.project_slug}}
+        :alt: Development Status
+
+    .. image:: https://img.shields.io/pypi/types/{{cookiecutter.project_slug}}.svg
+        :target: https://pypi.python.org/pypi/{{cookiecutter.project_slug}}
+        :alt: Typed
+
+    .. image:: https://readthedocs.org/projects/{{cookiecutter.project_slug}}/badge/?version=latest
+        :target: http://{{cookiecutter.project_slug}}.readthedocs.io/?badge=latest/
+        :alt: Documentation Status
+
+    .. image:: https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/branch/main/graph/badge.svg?token=0IZOKN2DYL
+        :target: https://codecov.io/gh/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}
+        :alt: Code Coverage
+
+    .. image:: https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml/badge.svg?branch=main
+        :target: https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/test.yml
+        :alt: Test Status
+
+    .. image:: https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml/badge.svg
+        :target: https://github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/actions/workflows/lint.yml
+        :alt: Lint Status
+
+    .. image:: https://img.shields.io/badge/Published%20on-Django%20Packages-0c3c26
+        :target: https://djangopackages.org/packages/p/{{cookiecutter.project_slug}}/
+        :alt: Published on Django Packages
+
+    .. image:: https://api.securityscorecards.dev/projects/github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}/badge
+        :target: https://securityscorecards.dev/viewer/?uri=github.com/{{cookiecutter.github_owner}}/{{cookiecutter.project_slug}}
+        :alt: OSSF Scorecard
+
 
 {{cookiecutter.description}}
 
@@ -7,6 +67,7 @@
    :maxdepth: 2
    :caption: Contents:
 
+   reference/index
    changelog
 
 Indices and tables
