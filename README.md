@@ -8,9 +8,10 @@ This is my template for Django apps (*not Django sites!*), based on the tooling 
 The top level goals for this repository organization are to:
 
    * Test adequate permutations of currently supported versions of Python/Django
+      * Test against all Django supported RDBMS systems (optional)
    * Support development on Linux/OSX/Windows
    * Have secure release processes
-   * Encourage rigorous and linked documentation
+   * Encourage rigorous and linked ([intersphinx](https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html)!) documentation
 
 Key features and design choices, include:
 
