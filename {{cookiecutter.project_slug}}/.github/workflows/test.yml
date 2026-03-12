@@ -254,6 +254,7 @@ jobs:
   coverage-combine:
     needs: [test-linux, test-windows, test-macos]
     runs-on: ubuntu-latest
+    environment: codecov
     permissions:
       contents: read
     steps:

@@ -5,6 +5,13 @@ This is my template for Django apps (*not Django sites!*), based on the tooling 
    * [django-enum](https://github.com/django-commons/django-enum)
    * [django-typer](https://github.com/django-commons/django-typer)
 
+The top level goals for this repository organization are to:
+
+   * Test adequate permutations of currently supported versions of Python/Django
+   * Support development on Linux/OSX/Windows
+   * Have secure release processes
+   * Encourage rigorous and linked documentation
+
 Key features and design choices, include:
 
    * Toolchain:
@@ -51,40 +58,21 @@ will fail without this token.
    **Read and write**. We recommend setting the expiry time to as short as possible because this token will be one-time use by the boostrap workflow.
    ![Multiple Subcommands Example](https://raw.githubusercontent.com/bckohan/django-app-template/main/PAT_perms.png)
 2. Add the `BOOTSTRAP_TOKEN` secret (Settings → Secrets and variables → Actions).
-3. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
+3. Create third party secrets:
+   * Create a [codecov.io](https://codecov.io) key and set it as the ``CODECOV_TOKEN`` in an environment named ``codecov``
+   * (If using) Create a [scorecard PAT](https://github.com/ossf/scorecard-action/blob/main/docs/authentication/fine-grained-auth-token.md) and assign it to ``SCORECARD_TOKEN`` in an environment named ``scorecard``
+4. Run the **Bootstrap** workflow manually (Actions → Bootstrap Repository → Run workflow).
    It reads the repo name, owner, and description from GitHub's metadata and opens a PR
    with all template files rendered.
    * **Choose your test strategy** - By default tests will run against SQLite only. To run tests against all Django-supported RDBMS, check the **database tests** box.
    * **Choose your Code of Conduct** - By default no Code of Conduct is included. Check the **Django Commons Code of Conduct** box to include `CODE_OF_CONDUCT.md` and the `update_coc.yml` workflow that keeps it synced with [django-commons](https://github.com/django-commons/membership).
-4. Review and merge the PR.
+5. Review and merge the PR.
 
 ### Locally
 
 ```bash
 uvx --with pyfiglet --with jinja2-time cookiecutter gh:bckohan/django-app-template
 ```
-
-## What Gets Generated
-
-| File | Description |
-|------|-------------|
-| `pyproject.toml` | hatchling build, uv dependency groups, ruff/mypy/pyright config |
-| `justfile` | task runner (setup, test, lint, docs, release) |
-| `src/<package>/` | source package with `__init__.py`, `apps.py`, `py.typed` |
-| `tests/settings.py` | sqlite or multi-DB Django settings (reads `RDBMS` env var) |
-| `doc/` | Sphinx + Furo docs with ReadTheDocs config |
-| `.github/workflows/test.yml` | SQLite testing on Linux + Windows + macOS |
-| `.github/workflows/test-db.yml` | Full DB testing (Postgres, MySQL, MariaDB, Oracle) |
-| `.github/workflows/lint.yml` | ruff + mypy + pyright static analysis |
-| `.github/workflows/release.yml` | Automated PyPI publish on version tags |
-| `.github/workflows/zizmor.yml` | CI security scanning |
-| `.github/workflows/bandit.yml` | Source security scanning |
-| `.github/workflows/scorecard.yml` | OpenSSF Scorecard |
-| `.github/workflows/update_coc.yml` | Auto-sync Code of Conduct from django-commons |
-| `.pre-commit-config.yaml` | pre-commit hooks (lint, format, docs, package) |
-| `.codecov.yml` | Codecov coverage config |
-| `LICENSE` | MIT license |
-| `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` | Community files |
 
 ## Derived Variables
 
